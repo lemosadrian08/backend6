@@ -1,40 +1,31 @@
 const express = require('express');
-const apiRoutes = require('./routers/app.routers');
 const path =require('path');
 
-const ProductsApi = require ('./contenedor');
+/* const apiRoutes = require('./routers/app.routers');
+const ProductsApi = require ('./models/productsContainer');
+const productsApi = new ProductsApi('./models/products.json') */
+
 const { Server: HttpServer } = require('http');
 const { Server: SocketServer } = require('socket.io');
 
-
 const app = express();
-const PORT = process.env.PORT || 8080;
 const httpServer = new HttpServer(app);
 const io = new SocketServer(httpServer);
-const productsApi = new ProductsApi('productos.json')
 
-const products=[]
-const messages=[]
+const PORT = process.env.PORT || 8080;
+
+
+const dbConfig =require('./db/config')
+const SQLCient = require('./db/Products/sql.products');
+const sqlClientProducts = new SQLCient(dbConfig.mariaDB, "products")
+const sqlClientMessages = new SQLCient(dbConfig.sqlite, "messages")
+
 
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-/* app.use(express.static('public')) */
 app.use(express.static(path.resolve(__dirname, './public')));
 
-
-// Routes
-/* app.use('/api', apiRoutes)
-
-app.get('/products', (req,res)=>{
-  productsApi.getAll().then((products) => 
-  res.render('index', {products})) 
-})
-
-app.post('/products', (req,res)=>{
-  productsApi.save(req.body)
-  res.redirect('/products')
-})  */
 
 //Listen
 const connectedServer = httpServer.listen(PORT, ()=>{
@@ -47,27 +38,30 @@ connectedServer.on('error', (error) => {
 
 
 // Socket Events
-io.on('connection', (socket)=>{
+//Products
+io.on('connection', async (socket)=>{
   console.log("New Clien conection");
-  socket.emit("products", [...products])
   
-  
-  //Product
-  socket.on("new-product", (newProduct)=>{
-    products.push(newProduct)
-    io.emit('products', products) 
+  socket.emit("products", await sqlClientProducts.getAllDB())
+
+  socket.on("new-product", async (newProduct)=>{
+    await sqlClientProducts.saveDB(newProduct)
+    io.sockets.emit("products", await sqlClientProducts.getAllDB()) 
   })
 
  
 })
-
-io.on("connection", (socket) => {
+//Chat
+/* io.on("connection",async (socket) => {
     console.log("There is a new client in the chat");
-    socket.emit("messages", messages);
-    console.log(messages);
+    
+    socket.emit("messages", await sqlClientMessages.getAllDB());
   
-    socket.on("new-message", (data) => {
-      messages.push(data);
-      io.sockets.emit("messages", messages);
+
+
+
+    socket.on("new-message", async (data) => {
+       await sqlClientMessages.saveDB(data)
+      io.sockets.emit("messages", await sqlClientMessages.getAllDB()); 
     });
-  });
+  }); */
