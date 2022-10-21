@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports={
     mariaDB: {
 		client: 'mysql',
@@ -13,7 +15,7 @@ module.exports={
 	sqlite: {
 		client: "sqlite3",
 		connection:{
-			filename: "./sqlite/chat.sqlite"
+			filename: path.resolve(__dirname, "chat.sqlite")
 		},
 		useNullAsDefault: true
 	}

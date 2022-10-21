@@ -1,7 +1,4 @@
-const dbconfig = require("./config");
-const knex = require("knex")(dbconfig.sqlite);
-
-module.exports = class SQLCient{
+module.exports = class SQLCientChat{
     constructor (config, tableName){
         this.knex= require('knex')(config)
         this.table= tableName
@@ -17,7 +14,7 @@ module.exports = class SQLCient{
             console.log(error.message);
         }
     }
-    async getAllDB(){
+    async traer(){
         try{
             const messages= await this.knex.from(this.table).select("date", "author", "text")
             console.table(messages)
@@ -27,7 +24,7 @@ module.exports = class SQLCient{
             console.log(error.message);
     }
 }
-    async saveDB(message){
+    async guardar(message){
         try{
             await knex(this.table).insert(message)
             /* await this.knex(this.table).insert(message) */
