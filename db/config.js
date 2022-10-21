@@ -1,4 +1,3 @@
-
 module.exports={
     mariaDB: {
 		client: 'mysql',
@@ -12,11 +11,10 @@ module.exports={
 		useNullAsDefault: true,
 	},
 	sqlite: {
-		client:"sqlite3",
-		connection: {
-			filename: './messages.sqlite'
+		client: "sqlite3",
+		connection:{
+			filename: "./sqlite/chat.sqlite"
 		},
-		useNullAsDefault: true,
+		useNullAsDefault: true
 	}
-
 }

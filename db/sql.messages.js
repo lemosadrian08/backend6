@@ -1,4 +1,4 @@
-const dbconfig = require("../config");
+const dbconfig = require("./config");
 const knex = require("knex")(dbconfig.sqlite);
 
 module.exports = class SQLCient{

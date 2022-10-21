@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 8080;
 const dbConfig =require('./db/config')
 const SQLCient = require('./db/Products/sql.products');
 const sqlClientProducts = new SQLCient(dbConfig.mariaDB, "products")
-const sqlClientMessages = new SQLCient(dbConfig.sqlite, "messages")
+const sqlClientMessages = new SQLCient(dbConfig.sqlite, "chat")
 
 
 // Middlewares
@@ -57,9 +57,6 @@ io.on('connection', async (socket)=>{
     
     socket.emit("messages", await sqlClientMessages.getAllDB());
   
-
-
-
     socket.on("new-message", async (data) => {
        await sqlClientMessages.saveDB(data)
       io.sockets.emit("messages", await sqlClientMessages.getAllDB()); 

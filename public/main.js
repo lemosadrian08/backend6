@@ -28,13 +28,12 @@ async function renderProducts(products) {
     document.getElementById("productsTable").innerHTML = html;
   }
 
-  socket.on("products", renderProducts);
+socket.on("products", renderProducts);
 
   
   // Chat
   function renderChat(data) {
-    const html = data
-      .map((elem, index) => {
+    const html = data.map((elem, index) => {
         return `<div>
               <strong style='color:blue'>${elem.author}</strong>:
               <em style='color:brown'>${elem.date}<em>
